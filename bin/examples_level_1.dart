@@ -1,26 +1,329 @@
-void main() {
-  List<List<dynamic>> products = [
-    ["Samsung A54", 300, true],
-    ["iPhone 13", 800, true],
-    ["Laptop Dell", 1200, false],
-    ["AirPods", 150, true],
-    ["Smart Watch", 200, true],
-  ];
+// import 'classes/person.dart';
+// import 'classes/student.dart';
+//
+// void main()
+// {
+//   Person person1 = Person("name", 12);
+//   person1.setAge=-5;
+//   person1.printInfo();
+//
+//
+//   person1.setAge=78;
+//   person1.printInfo();
+//
+//
+//
+//   Student student1 =  Student("Ali", 22, 2.4);
+//   student1.printInfo();
+//
+//   Student student2 =  Student.fresher("Mohammad", 25);
+//   student2.printInfo();
+//
+//
+//   student1.setAge =43;
+//   student1.printInfo();
+// }
 
-  print(products);
+/// Mohammad Alaswad
+class Person {
+  String _name;
+  int _age;
 
-  products.removeWhere((element) => element[0] == "Laptop Dell");
-  print(products);
+  Person(this._name, this._age);
 
-  int iphoneIndex = products.indexWhere((element) => element[0] == "iPhone 13");
-  if(iphoneIndex != -1){
-    products[iphoneIndex][1] = 950;
+  String get name => _name;
+  int get age => _age;
+
+  set age(int val) {
+    if (val > 0) {
+      _age = val;
+    } else {
+      print("the age can not be negative ");
+    }
   }
-
-var cheapProduct = products.where((element) => element[1] < 500 ,).toList();
-
-  print(cheapProduct);
 }
+
+class Student extends Person {
+  double gpa;
+
+  Student(super.name, super.age, this.gpa);
+
+  Student.fresher(super.name, super.age) : gpa = 0.0;
+}
+
+void main() {
+  Student s1 = Student("Ali", 22, 2.4);
+
+  Student s2 = Student.fresher("Mohammad", 25);
+
+  print("Student 1:");
+  print(s1.name);
+  print(s1.age);
+  print(s1.gpa);
+
+  s1.age = -19;
+  print("After invalid age:");
+  print(s1.age);
+
+  print("\nStudent 2:");
+  print(s2.name);
+  print(s2.age);
+  print(s2.gpa);
+}
+
+// void main() {
+//   late String player;
+//   List<int?> scores = [10, null, 20, 30];
+//
+//   try{
+//     player='Mario';
+//     print("The Player : $player");
+//
+//     List<int> cleanScores =[];
+//     for(var s in scores) {
+//       if (s != null) {
+//         cleanScores.add(s); // 10 20 30
+//       }
+//     }
+//
+//     if(cleanScores.isEmpty){
+//       throw Exception('لا توجد نقاط');
+//     }
+//
+//     var bestRound = cleanScores.skip(1).take(2); // 20 30
+//
+//     int total = bestRound.fold(0, (sum, s) => sum + s,); //50
+//
+//     int? bonus;
+//     int finalScore = total  + (bonus ?? 5); //55
+//
+//     print("The Final Score : $finalScore");
+//
+//   }catch(e){
+//     print("Error : $e");
+//   }
+//}
+
+// /// Mohammad Alaswad
+// import 'dart:io';
+//
+// List<Map<String, dynamic>> homeDevices = [
+//   {'name': 'AC', 'isOn': false, 'room': 'Living Room', 'power': 1500},
+//   {'name': 'TV', 'isOn': true, 'room': 'Living Room', 'power': 200},
+//   {'name': 'Light', 'isOn': true, 'room': 'Kitchen', 'power': 20},
+//   {'name': 'Fridge', 'isOn': true, 'room': 'Kitchen', 'power': 500},
+// ];
+// void main() {
+//   getStatus();
+//   print(" this is the sum of powered on devices : ${sumOfWatts()}");
+//
+//   toggle();
+//   //ecoMode();
+//
+//   getStatus();
+//
+//   print(" this is the sum of powered on devices : ${sumOfWatts()}");
+// }
+//
+// void getStatus() {
+//   homeDevices.forEach((device) {
+//     print("device: ${device['name']} and it's status is:  ${device['isOn']}");
+//   });
+// }
+//
+// void toggle() {
+//   bool found = false;
+//   print("please enter the name of the deivce you want to change it's status");
+//   try {
+//     String? input = stdin.readLineSync();
+//     if (input == null || input.isEmpty) {
+//       print("Invalid input ");
+//       return;
+//     }
+//
+//     for (int i = 0; i < homeDevices.length; i++) {
+//       if (homeDevices[i]['name'] == input) {
+//         found = true;
+//         var statusValue = homeDevices[i]['isOn'];
+//
+//         homeDevices[i]['isOn'] = !statusValue;
+//
+//         print("Device status changed successfully ");
+//
+//         break;
+//       }
+//     }
+//     if (!found) {
+//       print(" the device you entered is not exist");
+//     }
+//   } catch (e) {
+//     print(" input error ");
+//   }
+// }
+//
+// void ecoMode() {
+//   homeDevices.where((device) => device['power'] > 100).forEach((device) {
+//     device['isOn'] = false;
+//   });
+// }
+//
+// int sumOfWatts() {
+//   var sum = 0;
+//   homeDevices.where((device) => device['isOn'] == true).forEach((device) {
+//     sum += device['power'] as int;
+//   });
+//
+//   return sum;
+// }
+
+/// TASK 1
+// import 'dart:io';
+// List<Map<String, dynamic>> homeDevices = [
+//   {'name': 'AC', 'isOn': false, 'room': 'Living Room', 'power': 1500},
+//   {'name': 'TV', 'isOn': true, 'room': 'Living Room', 'power': 200},
+//   {'name': 'Light', 'isOn': true, 'room': 'Kitchen', 'power': 20},
+//   {'name': 'Fridge', 'isOn': true, 'room': 'Kitchen', 'power': 500},
+// ];
+//
+// void main() {
+//   print("🏠 --- Welcome to Smart Home System --- 🏠");
+//
+//   while (true) {
+//     print("\n--- Main Menu ---");
+//     print("1. View Devices Status");
+//     print("2. Toggle Device (On/Off)");
+//     print("3. Activate Eco Mode (Save Energy)");
+//     print("4. Calculate Total Power Consumption");
+//     print("5. Exit");
+//     stdout.write("Select an option: ");
+//
+//     String? choice = stdin.readLineSync();
+//
+//     switch (choice) {
+//       case '1':
+//         displayStatus();
+//         break;
+//       case '2':
+//         toggleDevice();
+//         break;
+//       case '3':
+//         activateEcoMode();
+//         break;
+//       case '4':
+//         calculatePower();
+//         break;
+//       case '5':
+//         print("Shutting down system...");
+//         return;
+//       default:
+//         print("❌ Invalid option.");
+//     }
+//   }
+// }
+//
+// void displayStatus() {
+//   print("\n--- Device Status ---");
+//   for (var device in homeDevices) {
+//     String status = device['isOn'] ? "ON ✅" : "OFF ❌";
+//     print("- ${device['name']} (${device['room']}): $status");
+//   }
+// }
+//
+// void toggleDevice() {
+//   stdout.write("Enter device name to toggle: ");
+//   String? name = stdin.readLineSync();
+//
+//   try {
+//     var device = homeDevices.firstWhere(
+//           (d) => d['name'].toLowerCase() == name?.toLowerCase(),
+//       orElse: () => {},
+//     );
+//
+//     if (device.isEmpty) {
+//       print("❌ Device not found.");
+//     } else {
+//       device['isOn'] = !device['isOn'];
+//       print("Done! ${device['name']} is now ${device['isOn'] ? 'ON' : 'OFF'}");
+//     }
+//   } catch (e) {
+//     print("Error: $e");
+//   }
+// }
+//
+// void activateEcoMode() {
+//   print("Activating Eco Mode...");
+//
+//   var highPowerDevices = homeDevices.where((d) => d['power'] > 100 && d['isOn'] == true);
+//
+//   highPowerDevices.forEach((d) {
+//     d['isOn'] = false;
+//     print("Shutting down ${d['name']} to save energy.");
+//   });
+//
+//   print("✅ Eco Mode active.");
+// }
+//
+// void calculatePower() {
+//   double total = homeDevices
+//       .where((d) => d['isOn'] == true)
+//       .fold(0, (sum, d) => sum + d['power']);
+//
+//   print("\n⚡ Current Power Consumption: $total Watts");
+//
+//   if (total > 2000) {
+//     print("⚠️ Warning: High power load!");
+//   }
+// }
+
+// import 'functions.dart';
+//
+// void main() {
+//   print('⚽ Elite Football Club\n');
+//
+//   Set<String> players = {'Salah', 'Benzema', 'Son', 'Mane', 'Kane'};
+//
+//   Map<String, int> goals = {
+//     'Salah': 23,
+//     'Benzema': 18,
+//     'Son': 15,
+//     'Mane': 12,
+//     'Kane': 9,
+//   };
+//
+//   searchPlayer(players, "Sa");
+//   print("Top Score : ${getTopScores(goals)}");
+//   displayPlayers(name: "Salah", goals: 23, showPosition: true);
+//   displayPlayers(name: "Son", goals: 22);
+//
+//   print("Total Goals : ${totalGoals(goals)}");
+//
+//   print(checkAny(goals));
+//   print(checkEvery(goals));
+// }
+
+// void main() {
+//   List<List<dynamic>> products = [
+//     ["Samsung A54", 300, true],
+//     ["iPhone 13", 800, true],
+//     ["Laptop Dell", 1200, false],
+//     ["AirPods", 150, true],
+//     ["Smart Watch", 200, true],
+//   ];
+//
+//   print(products);
+//
+//   products.removeWhere((element) => element[0] == "Laptop Dell");
+//   print(products);
+//
+//   int iphoneIndex = products.indexWhere((element) => element[0] == "iPhone 13");
+//   if(iphoneIndex != -1){
+//     products[iphoneIndex][1] = 950;
+//   }
+//
+// var cheapProduct = products.where((element) => element[1] < 500 ,).toList();
+//
+//   print(cheapProduct);
+// }
 
 // void main() {
 //   List<int> grades = [22, 50, 90, 75, 32, 88, 45];
