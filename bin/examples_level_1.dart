@@ -1,3 +1,91 @@
+enum OrderStatus { pending, shipped, delivered }
+
+class AppConfig {
+ static String currency = "SYP";
+ static void welcome ()=> print("Welcome to Delivery app");
+}
+
+mixin LocationTracker { // with
+  void trackLocation() {
+    print("Tracking GPS location...");
+  }
+}
+
+abstract class IRateable { //implements
+  void rate (int stars);
+}
+
+abstract class Delivery {
+  double price;
+  Delivery(this.price);
+
+  Future<void> startDelivery();
+
+  factory Delivery.create(double distance , double price){
+    if(distance > 50) return InternationalDelivery(price);
+    return LocalDelivery(price);
+  }
+}
+
+// Genric
+class Response<T> {
+  T? data;
+  Response(this.data);
+} //Type
+
+class LocalDelivery extends Delivery with LocationTracker{
+  LocalDelivery(super.price);
+
+  @override
+  Future<void> startDelivery() async {
+    trackLocation();
+    print("Starting Local Delivery. Cost : $price ${AppConfig.currency}");
+
+    await Future.delayed(Duration(seconds: 5));
+    print("Delivery Completed Locally");
+  }
+
+}
+
+class InternationalDelivery extends Delivery implements IRateable {
+  InternationalDelivery(super.price);
+
+  @override
+  Future<void> startDelivery() async {
+    print(
+        "Starting International Delivery. Cost : $price ${AppConfig.currency}");
+    await Future.delayed(Duration(seconds: 7));
+    print("Delivery Completed International");
+  }
+
+  @override
+  void rate(int stars)=> print("Rating : $stars");
+}
+
+void main() async{
+  AppConfig.welcome();
+
+  var myOrder = Delivery.create(60, 500000);
+
+  await myOrder.startDelivery();
+
+  var finalStatus = Response<OrderStatus>(OrderStatus.delivered);
+
+  print("Final Status : ${finalStatus.data}");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 // import 'classes/person.dart';
 // import 'classes/student.dart';
 //
@@ -24,52 +112,52 @@
 //   student1.printInfo();
 // }
 
-/// Mohammad Alaswad
-class Person {
-  String _name;
-  int _age;
-
-  Person(this._name, this._age);
-
-  String get name => _name;
-  int get age => _age;
-
-  set age(int val) {
-    if (val > 0) {
-      _age = val;
-    } else {
-      print("the age can not be negative ");
-    }
-  }
-}
-
-class Student extends Person {
-  double gpa;
-
-  Student(super.name, super.age, this.gpa);
-
-  Student.fresher(super.name, super.age) : gpa = 0.0;
-}
-
-void main() {
-  Student s1 = Student("Ali", 22, 2.4);
-
-  Student s2 = Student.fresher("Mohammad", 25);
-
-  print("Student 1:");
-  print(s1.name);
-  print(s1.age);
-  print(s1.gpa);
-
-  s1.age = -19;
-  print("After invalid age:");
-  print(s1.age);
-
-  print("\nStudent 2:");
-  print(s2.name);
-  print(s2.age);
-  print(s2.gpa);
-}
+// /// Mohammad Alaswad
+// class Person {
+//   String _name;
+//   int _age;
+//
+//   Person(this._name, this._age);
+//
+//   String get name => _name;
+//   int get age => _age;
+//
+//   set age(int val) {
+//     if (val > 0) {
+//       _age = val;
+//     } else {
+//       print("the age can not be negative ");
+//     }
+//   }
+// }
+//
+// class Student extends Person {
+//   double gpa;
+//
+//   Student(super.name, super.age, this.gpa);
+//
+//   Student.fresher(super.name, super.age) : gpa = 0.0;
+// }
+//
+// void main() {
+//   Student s1 = Student("Ali", 22, 2.4);
+//
+//   Student s2 = Student.fresher("Mohammad", 25);
+//
+//   print("Student 1:");
+//   print(s1.name);
+//   print(s1.age);
+//   print(s1.gpa);
+//
+//   s1.age = -19;
+//   print("After invalid age:");
+//   print(s1.age);
+//
+//   print("\nStudent 2:");
+//   print(s2.name);
+//   print(s2.age);
+//   print(s2.gpa);
+// }
 
 // void main() {
 //   late String player;
