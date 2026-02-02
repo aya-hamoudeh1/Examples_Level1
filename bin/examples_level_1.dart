@@ -1,77 +1,45 @@
-enum OrderStatus { pending, shipped, delivered }
+import 'dart:async';
 
-class AppConfig {
- static String currency = "SYP";
- static void welcome ()=> print("Welcome to Delivery app");
-}
-
-mixin LocationTracker { // with
-  void trackLocation() {
-    print("Tracking GPS location...");
+extension CurrencyFormatter on double {
+  String toGoldPrice() {
+    return 'Gold Price Now : \$${toStringAsFixed(2)}';
   }
 }
 
-abstract class IRateable { //implements
-  void rate (int stars);
-}
+void main() async {
+  final StreamController<double> priceController = StreamController<double>();
+  print("----System Started -----");
 
-abstract class Delivery {
-  double price;
-  Delivery(this.price);
+  StreamSubscription<double> subscription = priceController.stream.listen(
+    (price) {
+      final now = DateTime.now();
+      String timeString = '${now.hour}:${now.minute}:${now.second}';
+      print('[$timeString] ${price.toGoldPrice()}');
+    },
+    onDone: () => print("---Market Closed (Stream Closed)"),
+    onError: (error) => print('Error: $error'),
+  );
 
-  Future<void> startDelivery();
 
-  factory Delivery.create(double distance , double price){
-    if(distance > 50) return InternationalDelivery(price);
-    return LocalDelivery(price);
-  }
-}
+  // Adding Data
+  priceController.sink.add(2030.50);
+  await Future.delayed(Duration(seconds: 5));
 
-// Genric
-class Response<T> {
-  T? data;
-  Response(this.data);
-} //Type
+  priceController.sink.add(2035.50);
+  await Future.delayed(Duration(seconds: 2));
 
-class LocalDelivery extends Delivery with LocationTracker{
-  LocalDelivery(super.price);
+  subscription.pause();
+  print(">>>> Pause temporarily");
 
-  @override
-  Future<void> startDelivery() async {
-    trackLocation();
-    print("Starting Local Delivery. Cost : $price ${AppConfig.currency}");
+  priceController.sink.add(2040.50);
+  await Future.delayed(Duration(seconds: 2));
 
-    await Future.delayed(Duration(seconds: 5));
-    print("Delivery Completed Locally");
-  }
+  subscription.resume();
+  print(">>>> Resume");
+  await Future.delayed(Duration(seconds: 3));
 
-}
+  await priceController.close();
 
-class InternationalDelivery extends Delivery implements IRateable {
-  InternationalDelivery(super.price);
-
-  @override
-  Future<void> startDelivery() async {
-    print(
-        "Starting International Delivery. Cost : $price ${AppConfig.currency}");
-    await Future.delayed(Duration(seconds: 7));
-    print("Delivery Completed International");
-  }
-
-  @override
-  void rate(int stars)=> print("Rating : $stars");
-}
-
-void main() async{
-  AppConfig.welcome();
-
-  var myOrder = Delivery.create(60, 500000);
-
-  await myOrder.startDelivery();
-
-  var finalStatus = Response<OrderStatus>(OrderStatus.delivered);
-
-  print("Final Status : ${finalStatus.data}");
 }
 
 
@@ -84,7 +52,203 @@ void main() async{
 
 
 
+/// Pharmacy System
+// import 'dart:async';
+//
+// // 1. Mixin: Discountable (لإضافة ميزة الخصم)
+// mixin Discountable {
+//   void applyDiscount(double price) {
+//     double discount = price * 0.10;
+//     print('Discount (10%): -${discount.toStringAsFixed(2)}');
+//     print('Final Price: ${(price - discount).toStringAsFixed(2)}');
+//   }
+// }
+//
+// // 2. Abstract Class: Product (الأساس)
+// abstract class Product {
+//   int id;
+//   String name;
+//   double price;
+//
+//   Product(this.id, this.name, this.price);
+// }
+//
+// // 3. Inherited Class: Medicine (الوراثة + الخصائص الإضافية)
+// class Medicine extends Product with Discountable {
+//   String expiryDate;
+//   int? stock; // Null-safe variable
+//
+//   Medicine({
+//     required int id,
+//     required String name,
+//     required double price,
+//     required this.expiryDate,
+//     this.stock, // Optional parameter
+//   }) : super(id, name, price);
+//
+//   @override
+//   String toString() {
+//     // التعامل مع الـ Null في الـ stock باستخدام الـ Default value (??)
+//     return 'ID: $id | Medicine: $name | Price: \$$price | Expiry: $expiryDate | Stock: ${stock ?? "Out of Stock"}';
+//   }
+// }
+//
+// // 4. Management Class: PharmacyManager
+// class PharmacyManager {
+//   final List<Medicine> _inventory = [];
+//
+//   // دالة إضافة دواء (Named Parameters)
+//   void addMedicine(Medicine med) {
+//     _inventory.add(med);
+//     print('Done: Added ${med.name} to inventory.');
+//   }
+//
+//   // دالة البحث (Arrow Function + Try-Catch)
+//   void searchByName(String name) {
+//     print('\n--- Searching for: $name ---');
+//     try {
+//       // استخدام firstWhere للبحث
+//       var result = _inventory.firstWhere(
+//         (med) => med.name.toLowerCase() == name.toLowerCase(),
+//       );
+//       print('Result: $result');
+//       result.applyDiscount(result.price); // تطبيق الخصم عند الإيجاد
+//     } catch (e) {
+//       // التعامل مع الخطأ في حال لم يجد الدواء
+//       print('Error: Sorry, this medicine ($name) is not available right now.');
+//     }
+//   }
+//
+//   // 5. Asynchronous Function (محاكاة جلب البيانات)
+//   Future<void> getInventoryAsync() async {
+//     print('\n[System] Connecting to Server...');
+//     await Future.delayed(Duration(seconds: 3)); // انتظار 3 ثواني
+//
+//     print('--- Pharmacy Inventory List ---');
+//     if (_inventory.isEmpty) {
+//       print('No medicines available.');
+//     } else {
+//       for (var med in _inventory) {
+//         print(med);
+//       }
+//     }
+//     print('-------------------------------\n');
+//   }
+// }
+//
+// // 6. Main Function
+// void main() async {
+//   var myPharmacy = PharmacyManager();
+//
+//   // إضافة أدوية (بيانات تجريبية)
+//   myPharmacy.addMedicine(
+//     Medicine(
+//       id: 101,
+//       name: 'Panadol',
+//       price: 5.0,
+//       expiryDate: '2026-12',
+//       stock: 50,
+//     ),
+//   );
+//
+//   myPharmacy.addMedicine(
+//     Medicine(
+//       id: 102,
+//       name: 'Vitamin C',
+//       price: 12.5,
+//       expiryDate: '2025-08',
+//       // لاحظ لم نمرر stock لأنها Optional (Null)
+//     ),
+//   );
+//
+//   // تجربة البحث عن دواء موجود
+//   myPharmacy.searchByName('Panadol');
+//
+//   // تجربة البحث عن دواء غير موجود (لإظهار الـ Exception)
+//   myPharmacy.searchByName('Aspirin');
+//
+//   // جلب المخزن كاملاً بطريقة Async
+//   await myPharmacy.getInventoryAsync();
+//
+//   print('Program finished.');
+// }
 
+///Delivery System
+// enum OrderStatus { pending, shipped, delivered }
+//
+// class AppConfig {
+//  static String currency = "SYP";
+//  static void welcome ()=> print("Welcome to Delivery app");
+// }
+//
+// mixin LocationTracker { // with
+//   void trackLocation() {
+//     print("Tracking GPS location...");
+//   }
+// }
+//
+// abstract class IRateable { //implements
+//   void rate (int stars);
+// }
+//
+// abstract class Delivery {
+//   double price;
+//   Delivery(this.price);
+//
+//   Future<void> startDelivery();
+//
+//   factory Delivery.create(double distance , double price){
+//     if(distance > 50) return InternationalDelivery(price);
+//     return LocalDelivery(price);
+//   }
+// }
+//
+// // Genric
+// class Response<T> {
+//   T? data;
+//   Response(this.data);
+// } //Type
+//
+// class LocalDelivery extends Delivery with LocationTracker{
+//   LocalDelivery(super.price);
+//
+//   @override
+//   Future<void> startDelivery() async {
+//     trackLocation();
+//     print("Starting Local Delivery. Cost : $price ${AppConfig.currency}");
+//
+//     await Future.delayed(Duration(seconds: 5));
+//     print("Delivery Completed Locally");
+//   }
+//
+// }
+//
+// class InternationalDelivery extends Delivery implements IRateable {
+//   InternationalDelivery(super.price);
+//
+//   @override
+//   Future<void> startDelivery() async {
+//     print(
+//         "Starting International Delivery. Cost : $price ${AppConfig.currency}");
+//     await Future.delayed(Duration(seconds: 7));
+//     print("Delivery Completed International");
+//   }
+//
+//   @override
+//   void rate(int stars)=> print("Rating : $stars");
+// }
+//
+// void main() async{
+//   AppConfig.welcome();
+//
+//   var myOrder = Delivery.create(60, 500000);
+//
+//   await myOrder.startDelivery();
+//
+//   var finalStatus = Response<OrderStatus>(OrderStatus.delivered);
+//
+//   print("Final Status : ${finalStatus.data}");
+// }
 
 // import 'classes/person.dart';
 // import 'classes/student.dart';
@@ -264,7 +428,7 @@ void main() async{
 //   return sum;
 // }
 
-/// TASK 1
+///Task1
 // import 'dart:io';
 // List<Map<String, dynamic>> homeDevices = [
 //   {'name': 'AC', 'isOn': false, 'room': 'Living Room', 'power': 1500},
